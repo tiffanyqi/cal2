@@ -111,7 +111,7 @@ class Profile(models.Model):
                 # for it
                 if len(cc.query()) > 0:
                     cc.save()
-                    print "Created color category {}".format(cc)
+                    # print "Created color category {}".format(cc)
 
         # Create Color Categories
         for key in GEvent.EVENT_COLORS_KEYS:
