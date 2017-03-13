@@ -431,10 +431,10 @@ class TimeNode:
         """
 
         # Basic sanity chex
-        if timenode.prev:
-            print "Warning! Timenode '{}' to be inserted has a prev".format(timenode.id)
-        if timenode.next:
-            print "Warning! Timenode '{}' to be inserted has a next".format(timenode.id)
+        # if timenode.prev:
+            # print "Warning! Timenode '{}' to be inserted has a prev".format(timenode.id)
+        # if timenode.next:
+            # print "Warning! Timenode '{}' to be inserted has a next".format(timenode.id)
         if not timenode.start or not timenode.end or timenode.start > timenode.end:
             raise Exception("Timenode missing start or end time, or start time > end time")
 
@@ -452,8 +452,8 @@ class TimeNode:
                     else:
                         return False, node.next
                 else:
-                    if timenode.prev:
-                        print "Warning! Overwriting timenode.prev"
+                    # if timenode.prev:
+                        # print "Warning! Overwriting timenode.prev"
                     node.next = timenode
                     timenode.prev = node
                 return True, None
@@ -468,8 +468,8 @@ class TimeNode:
                     else:
                         return False, node.prev
                 else:
-                    if timenode.next:
-                        print "Warning! Overwriting timenode.next of timenode '{}'".format(timenode.id)
+                    # if timenode.next:
+                        # print "Warning! Overwriting timenode.next of timenode '{}'".format(timenode.id)
                     node.prev = timenode
                     timenode.next = node
                 return True, None
@@ -504,10 +504,10 @@ class TimeNode:
             raise Exception("Base node missing start or end time, or start time > end time")
         if not timenode.start or not timenode.end or timenode.start > timenode.end:
             raise Exception("Timenode missing start or end time, or start time > end time")
-        if timenode.prev:
-            print "Warning! Timenode '{}' to be inserted has a prev".format(timenode.id)
-        if timenode.next:
-            print "Warning! Timenode '{}' to be inserted has a next".format(timenode.id)
+        # if timenode.prev:
+            # print "Warning! Timenode '{}' to be inserted has a prev".format(timenode.id)
+        # if timenode.next:
+            # print "Warning! Timenode '{}' to be inserted has a next".format(timenode.id)
 
         if timenode.start >= self.end:
             if self.next:
@@ -521,8 +521,8 @@ class TimeNode:
                     self.next = self.next.insert(timenode)
                     self.next.prev = self
             else:
-                if timenode.prev:
-                    print "Warning! Overwriting timenode.prev"
+                # if timenode.prev:
+                    # print "Warning! Overwriting timenode.prev"
                 self.next = timenode
                 timenode.prev = self
             return self
@@ -538,8 +538,8 @@ class TimeNode:
                     self.prev = self.prev.insert(timenode)
                     self.prev.next = self
             else:
-                if timenode.next:
-                    print "Warning! Overwriting timenode.next of timenode '{}'".format(timenode.id)
+                # if timenode.next:
+                    # print "Warning! Overwriting timenode.next of timenode '{}'".format(timenode.id)
                 self.prev = timenode
                 timenode.next = self
             return self
