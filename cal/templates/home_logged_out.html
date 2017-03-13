@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block meta %}
+  {{ block.super }}
+  <meta name="google-signin-scope" content="{{ social_auth_google_oauth2_scope | safe }}">
+  <meta name="google-signin-client_id" content="{{ social_auth_google_plus_key }}">
+{% endblock %}
+
+{% block head %}
+  {{ block.super }}
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="cal-home-logged-out">
+  <div class="cal-header">
+    <h1>CalendarAnalytics</h1>
+    <h3 class="cal-description">The most comprehensive way to analyze your time. What have you done over the years?</h3>
+    <div class="g-signin2 cal-signin-button" data-onsuccess="onSignIn" data-theme="dark"></div>
+  </div>
+    
+  <div class="cal-main-display">
+    <div class="col-md-4">
+      <h3>View Real Data</h3>
+      <div class="col-info">
+        <img src="{% static "img/category-sleep.png" %}"/>
+        <p>Check out how much time you're spending on certain parts of your routine.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h3>Run Your Own Statistics</h3>
+      <div class="col-info">
+        <img src="{% static "img/adding-tag.png" %}" />
+        <p>Add tags and generate data based on keywords extracted from event names</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h3>Orient to your Goals</h3>
+      <div class="col-info">
+        <img src="{% static "img/tag-detail.png" %}"/>
+        <p>Develop the ability to recognize action items to either increase or decrease certain categories. View the full history of time spent on a tag or category, with trend lines and moving averages. </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block bottom_js %}
+  {{ block.super }}
+
+  <script>
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      var profile = googleUser.getBasicProfile();
+      console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+      console.log('Full Name: ' + profile.getName());
+      console.log('Given Name: ' + profile.getGivenName());
+      console.log('Family Name: ' + profile.getFamilyName());
+      console.log("Image URL: " + profile.getImageUrl());
+      console.log("Email: " + profile.getEmail());
+
+      // The ID token you need to pass to your backend:
+      var id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token);
+
+      var authResponse = googleUser.getAuthResponse();
+      var $form;
+      var $input;
+
+      $form = $("<form>");
+      $form.attr("action", "/complete-with-token/google-plus/");
+      $form.attr("method", "post");
+      $input = $("<input>");
+      $input.attr("name", "access_token");
+      $input.attr("value", authResponse.access_token);
+      $form.append($input);
+      // Add csrf-token if needed
+      $(document.body).append($form);
+      $form.submit();
+    };
+  </script>
+
+{% endblock %}

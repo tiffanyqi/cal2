@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+  {{ block.super }}
+
+  <!-- START PSA G+ Logout -->
+  <script type="text/javascript">
+    // PSA G+ Logout
+    gapi.load('auth2', function () {
+      var auth2;
+      auth2 = gapi.auth2.init({
+        client_id: "{{ social_auth_google_plus_key }}",
+        scope: "{{ social_auth_google_oauth2_scope | safe }}"
+      });
+      auth2.then(function () {
+        // console.log("User is signed-in in Google+ platform?", auth2.isSignedIn.get() ? "Yes" : "No");
+        if (auth2.isSignedIn.get()) {
+          $('#logout').on('click', function (event) {
+            event.preventDefault();
+            auth2.signOut().then(function () {
+              console.log("Logged out from Google+ platform");
+              document.location = "/logout";
+            });
+          });
+        }
+      });
+    });
+  </script>
+  <!-- END PSA G+ Logout -->
+
+{% endblock %}
+
+<!-- Information when logged in -->
+{% block content %}
+<div class="cal-home-logged-in">
+  <ul class="nav nav-tabs">
+    <li>
+      <a href="/">CalendarAnalytics</a>
+    </li>
+    <li class="pull-right">
+      <a id="logout" href="/logout">Log out</a>
+    </li>
+    <li class="pull-right sync-button">
+      <a>Sync Calendars</a>
+    </li>
+    <li class="pull-right" id="cumulative-toggle">
+      <a>Toggle Cumulative</a>
+    </li>
+  </ul>
+  {% if request.user.profile.authed %}
+
+  <ui-view class="col-md-8"></ui-view>
+
+  <!-- Lists and other info on the side -->
+  <div class="col-md-4 calendar-border">
+
+    <category-list is-cumulative="false" hide-zero-hours="true"></category-list>
+    <category-list is-cumulative="true" hide-zero-hours="true" style="display:none"></category-list>
+    
+    <tag-list is-cumulative="false" hide-zero-hours="false"></tag-list>
+    <tag-list is-cumulative="true" hide-zero-hours="false" style="display:none"></tag-list>
+
+  <!-- For new users, needing to connect their calendars -->
+  {% else %}
+  <div class="container" style="text-align: center; margin-top: 10px">
+    <a href="/auth/google"><button><h2>Connect your Google Calendar</h2></button></a>
+  </div>
+  {% endif %}
+
+  <!-- Super user buttons -->
+  <div class="col-md-4">
+    <h4>Options</h4>
+    <div>
+      {% if request.user.is_staff %}
+        <a href="/v1/sync"><button class="btn btn-primary pull-left">Inc. Sync Main Calendar</button></a>
+        <a href="/v1/sync?full_sync=true"><button class="btn btn-primary pull-left">Full Sync Main Calendar</button></a>
+        <a href="/v1/sync?sync_all=true"><button class="btn btn-primary pull-left">Inc. Sync All Calendars</button></a>
+        <a href="/v1/sync?full_sync=true&sync_all=true"><button class="btn btn-primary pull-left">Full Sync All Calendars</button></a>
+        <a href="/v1/toggle-privacy"><button class="btn btn-primary pull-left">Toggle Privacy</button></a>
+        <a href="/auth/clear"><button class="btn btn-primary pull-left">Reset Credentials</button></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
