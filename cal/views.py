@@ -60,7 +60,7 @@ def complete_with_token(request, backend):
     # request.backend and request.strategy will be loaded with the current
     # backend and strategy.
     token = request.POST.get('access_token')
-    print "Token: {}".format(token)
+    # print "Token: {}".format(token)
     user = request.backend.do_auth(token)
     if user:
         login(request, user)
@@ -99,7 +99,7 @@ def google_auth(request):
         gflow = None
 
     if not gflow:
-        print "Could not retrieve existing flow"
+        # print "Could not retrieve existing flow"
         gflow = GoogleFlow(id=request.user,
                           flow=default_flow)
         gflow.save()
