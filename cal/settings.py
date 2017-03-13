@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ENVIRONMENT = os.getenv('APP_ENVIRONMENT', 'dev')
 if ENVIRONMENT == 'prod':
-    PRODUCTION= True  # Defined for convenience
+    PRODUCTION = True  # Defined for convenience
 else:
     PRODUCTION = False  # Defined for convenience
 
@@ -23,7 +23,7 @@ else:
 
 if PRODUCTION:
     BASE_URL = 'limitless-springs-59856.herokuapp.com/'
-    DEBUG = False
+    DEBUG = True
     VERBOSE_PRINT = False
     TEMPLATE_DEBUG = False
 else:
