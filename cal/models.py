@@ -285,13 +285,12 @@ class GCalendar(models.Model):
                 # Google API doesn't accept constraints for the first request in incremental sync
                 result = service.events().list(syncToken=self.next_sync_token, **default_list_args).execute()
             except Exception as e:
-                t, v, tb = sys.exc_info()
                 if hasattr(e, 'resp') and e.resp.status == 410:
                     # Sync token is no longer valid, perform full sync
                     # print "Sync token is no longer valid, perform full sync for calendar {}".format(self.summary.encode('utf-8').strip())
                     result = service.events().list(**list_args_with_constraints).execute()
                 else:
-                    raise t, v, tb
+                    raise sys.exc_info()
 
         # Run the first iteration, for the first request
         for item in result['items']:
