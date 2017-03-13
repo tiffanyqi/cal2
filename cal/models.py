@@ -162,7 +162,7 @@ class GCalendar(models.Model):
             return color
         else:
             # This handles when data isn't consistent for some reason.
-            print "Warning: GEvent '{}' with id {} has an incorrect color_index value of '{}'".format(self.name, self.id, self.color_index)
+            # print "Warning: GEvent '{}' with id {} has an incorrect color_index value of '{}'".format(self.name, self.id, self.color_index)
             return GOOGLE_CALENDAR_COLORS['calendar']['1']
 
     def api_event_to_gevent(self, event):
@@ -211,13 +211,13 @@ class GCalendar(models.Model):
             g.recurrence = str(event.get('recurrence', ''))
             g.recurring_event_id = event.get('recurringEventId', '')
             g.save()
-            if settings.VERBOSE_PRINT:
-                print "Saved {} event: {}".format(g.start, g.name)
+            # if settings.VERBOSE_PRINT:
+                # print "Saved {} event: {}".format(g.start, g.name)
             return g
 
         else:
-            if settings.VERBOSE_PRINT:
-                print "Deleting event {}".format(event['id'])
+            # if settings.VERBOSE_PRINT:
+                # print "Deleting event {}".format(event['id'])
 
             # Status is cancelled, create a DeletedEvent
 
@@ -252,7 +252,7 @@ class GCalendar(models.Model):
         Assumes that the list of calendars for this profile is correct
         """
 
-        print "Syncing calendar {}".format(self.summary.encode('utf-8').strip())
+        # print "Syncing calendar {}".format(self.summary.encode('utf-8').strip())
         result = None
         creds = self.user.googlecredentials
         service = creds.get_service()
@@ -288,7 +288,7 @@ class GCalendar(models.Model):
                 t, v, tb = sys.exc_info()
                 if hasattr(e, 'resp') and e.resp.status == 410:
                     # Sync token is no longer valid, perform full sync
-                    print "Sync token is no longer valid, perform full sync for calendar {}".format(self.summary.encode('utf-8').strip())
+                    # print "Sync token is no longer valid, perform full sync for calendar {}".format(self.summary.encode('utf-8').strip())
                     result = service.events().list(**list_args_with_constraints).execute()
                 else:
                     raise t, v, tb
@@ -318,17 +318,17 @@ class GCalendar(models.Model):
         for d_event in deleted_events:
             d_event.apply()
 
-        print "Successfully synced calendar {}".format(self.summary.encode('utf-8').strip())
+        # print "Successfully synced calendar {}".format(self.summary.encode('utf-8').strip())
 
         # Some additional sanity checks
         # Check for non-duplicate events with the same recurring_event_id
         start_times = {}
         for recurrence in GEvent.objects.filter(calendar=self).exclude(recurrence=''):
             if recurrence.start in start_times.get(recurrence.recurring_event_id, set()):
-                print "Error: Multiple GEvents found with the same start and recurring_event_id"
+                # print "Error: Multiple GEvents found with the same start and recurring_event_id"
                 dupe_ids = [str(dupe.id) for dupe in GEvent.objects.filter(recurring_event_id=recurrence.recurring_event_id,
                                                                 start=recurrence.start)]
-                print "IDs are {} at time {}".format(", ".join(dupe_ids), recurrence.start)
+                # print "IDs are {} at time {}".format(", ".join(dupe_ids), recurrence.start)
 
             if not start_times.get(recurrence.recurring_event_id, None):
                 start_times[recurrence.recurring_event_id] = set()
@@ -446,7 +446,7 @@ class GEvent(Event):
             return color
         else:
             # This handles when data isn't consistent for some reason.
-            print "Warning: GEvent '{}' with id {} has an incorrect color_index value of '{}'".format(self.name, self.id, self.color_index)
+            # print "Warning: GEvent '{}' with id {} has an incorrect color_index value of '{}'".format(self.name, self.id, self.color_index)
             return GOOGLE_CALENDAR_COLORS['event']['1']
 
     def save(self, *args, **kwargs):
@@ -475,8 +475,8 @@ class GEvent(Event):
 
         super(GEvent, self).save(*args, **kwargs)
 
-        if made_aware and settings.VERBOSE_PRINT:
-            print "Made datetime timezone aware for GEvent {} with id {}".format(self.name, self.id)
+        # if made_aware and settings.VERBOSE_PRINT:
+            # print "Made datetime timezone aware for GEvent {} with id {}".format(self.name, self.id)
 
     def conflicts_with(self, gevent):
         """
@@ -883,7 +883,7 @@ class GoogleCredentials(models.Model):
         inaccessible_calendars = GCalendar.objects.filter(user=self.user)\
                                                   .exclude(calendar_id__in=calendar_ids)
         for i in inaccessible_calendars:
-            print "Deleting calendar '{}' because it is now inaccessible".format(i.summary)
+            # print "Deleting calendar '{}' because it is now inaccessible".format(i.summary)
             i.delete()
 
         self.save()
